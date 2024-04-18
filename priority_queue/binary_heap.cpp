@@ -57,5 +57,42 @@ struct binary_heap {
     T& operator[](std::size_t index) {
         return data[index];
     }
+
+    bool empty() {
+        return data.empty();
+    }
 };
+
+
+int main() {
+    std::vector<binary_heap<int>*> a;
+    int k, n, x, y;
+
+    std::string operation;
+    while (std::cin >> operation) {
+        if (operation == "create") {
+            a.push_back(new binary_heap<int>());
+        } else if (operation == "insert") {
+            std::cin >> k >> x;
+            a[k]->insert(x);
+        } else if (operation == "extract-min") {
+            std::cin >> k;
+            if (a[k]->empty()) {
+                std::cout << "*\n";
+                continue;
+            }
+            int value = a[k]->extract_min();
+            std::cout << value << '\n';
+        } else if (operation == "decrease-key") {
+            std::cin >> k >> x >> y;
+            a[k]->decrease_key(x, y);
+        } else if (operation == "merge") {
+            std::cin >> k >> n;
+            a.push_back(merge(a[k], a[n]));
+        }
+    }
+
+
+    return 0;
+}
 
