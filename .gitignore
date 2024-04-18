@@ -1,0 +1,7 @@
+__pycache__
+.vscode
+.vs
+.idea
+
+*.exe
+
