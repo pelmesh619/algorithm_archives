@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 
+// БИНАРНАЯ КУЧА
+
 template<typename T>
 struct binary_heap {
     std::vector<T> data;
@@ -12,6 +14,9 @@ struct binary_heap {
     }
 
     void sift_up(std::size_t index) {
+        if (index == 0) {
+            return;
+        }
         if (data[index] < data[(index - 1) / 2]) {
             std::swap(data[index], data[(index - 1) / 2]);
             if ((index - 1) / 2 > 0) {
@@ -61,8 +66,64 @@ struct binary_heap {
     bool empty() {
         return data.empty();
     }
+
+    void decrease_key(T x, T y) {
+        if (empty() || x <= y) {
+            return;
+        }
+
+        for (size_t i = 0; i < data.size(); i++) {
+            if (data[i] == x) {
+                data[i] = y;
+                sift_up(i);
+                return;
+            }
+        }
+
+    }
 };
 
+template<typename T>
+binary_heap<T>* merge(binary_heap<T>* binary_heap1, binary_heap<T>* binary_heap2) {
+    auto result = new binary_heap<T>();
+
+    result->data.resize(binary_heap1->data.size() + binary_heap2->data.size());
+
+    int i = 0; int j = 0;
+    while (i < binary_heap1->data.size() && j < binary_heap2->data.size()) {
+        if (binary_heap1->data[i] < binary_heap2->data[j]) {
+            result->data[i + j] = binary_heap1->data[i];
+            i++;
+        } else {
+            result->data[i + j] = binary_heap2->data[j];
+            j++;
+        }
+    }
+    while (i < binary_heap1->data.size()) {
+        result->data[i + j] = binary_heap1->data[i];
+        i++;
+    }
+    while (j < binary_heap2->data.size()) {
+        result->data[i + j] = binary_heap2->data[j];
+        j++;
+    }
+
+    result->sift_down(0);
+    for (int i = result->data.size() / 2 + 1; i >= 0; i--) {
+        result->sift_down(i);
+    }
+
+    return result;
+}
+
+/* Эта программа умеет отвечать на запросы:
+ *
+ * create - создание новой пустой кучи
+ * insert k x - вставка в k-ую кучу число x
+ * extract-min k - удаление и вывод минимума из k-ой кучи (если куча пуста, то выведется *)
+ * decrease-key k x y - поиск элемента x в k-ой кучи и уменьшение его ключа к значению y
+ * merge k n - создание новой кучи путем слияния k-ой и n-ой кучи
+*/
 
 int main() {
     std::vector<binary_heap<int>*> a;

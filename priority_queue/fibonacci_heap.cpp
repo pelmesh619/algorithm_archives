@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 
+// ФИББОНАЧИЕВА КУЧА
 
 template <typename T>
 struct Node {
@@ -252,7 +253,7 @@ struct FibHeap {
         return fib_heap;
     }
 
-    Node<T>* find(long long x, Node<T>* node) const {
+    Node<T>* find(T x, Node<T>* node) const {
         if (node == nullptr) {
             return nullptr;
         }
@@ -268,7 +269,7 @@ struct FibHeap {
         return this->find(x, node->left_child);
     }
 
-    void decrease_key(long long x, long long y) {
+    void decrease_key(T x, T y) {
         if (empty() || x <= y) {
             return;
         }
@@ -320,7 +321,14 @@ FibHeap<T>* merge(FibHeap<T>* fib_heap1, FibHeap<T>* fib_heap2) {
     return fib_heap1;
 }
 
-
+/* Эта программа умеет отвечать на запросы:
+ *
+ * create - создание новой пустой кучи
+ * insert k x - вставка в k-ую кучу число x
+ * extract-min k - удаление и вывод минимума из k-ой кучи (если куча пуста, то выведется *)
+ * decrease-key k x y - поиск элемента x в k-ой кучи и уменьшение его ключа к значению y
+ * merge k n - создание новой кучи путем слияния k-ой и n-ой кучи
+*/
 
 int main() {
     std::vector<FibHeap<int>*> a;
