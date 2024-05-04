@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 
+// БИНАРНОЕ ДЕРЕВО ПОИСКА
+
 template<typename T>
 struct Node {
     int value;
@@ -200,8 +202,66 @@ struct Tree {
         return find_k_maximum(k, current_node->left_child);
     }
 
+    std::vector<T> inorder() {
+        return inorder(root);
+    }
+
+    std::vector<T> inorder(Node<T>* current_node) {
+        if (!current_node) {
+            return {};
+        }
+        auto result = inorder(current_node->left_child);
+        result.push_back(current_node->value);
+        auto result2 = inorder(current_node->right_child);
+        result.insert(result.end(), result2.begin(), result2.end());
+
+        return result;
+    }
+
+    std::vector<T> preorder() {
+        return preorder(root);
+    }
+
+    std::vector<T> preorder(Node<T>* current_node) {
+        if (!current_node) {
+            return {};
+        }
+        std::vector<T> result = {current_node->value};
+        auto result2 = preorder(current_node->left_child);
+        result.insert(result.end(), result2.begin(), result2.end());
+        auto result3 = preorder(current_node->right_child);
+        result.insert(result.end(), result3.begin(), result3.end());
+
+        return result;
+    }
+
+    std::vector<T> postorder() {
+        return postorder(root);
+    }
+
+    std::vector<T> postorder(Node<T>* current_node) {
+        if (!current_node) {
+            return {};
+        }
+        auto result = postorder(current_node->left_child);
+        auto result2 = postorder(current_node->right_child);
+        result.insert(result.end(), result2.begin(), result2.end());
+        result.push_back(current_node->value);
+
+        return result;
+    }
+
 };
 
+/**
+Эта программа умеет отвечать на запросы:
+
+insert x - вставка в дерево элемента x
+delete x - удаление из дерева элемента x
+exists x - проверка на наличие элемента x (true, если элемент в дереве, иначе false)
+next x - вывод следующего элемента после x (none, если такового нет)
+prev x - вывод предыдущего элемента перед x (none, если такового нет)
+ */
 
 int main() {
     Tree<int> t;
