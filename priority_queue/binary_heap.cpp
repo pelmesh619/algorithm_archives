@@ -4,9 +4,9 @@
 // БИНАРНАЯ КУЧА
 
 template<typename T>
-struct binary_heap {
+struct BinaryHeap {
     std::vector<T> data;
-    binary_heap() = default;
+    BinaryHeap() = default;
 
     void insert(T a) {
         data.push_back(a);
@@ -84,8 +84,8 @@ struct binary_heap {
 };
 
 template<typename T>
-binary_heap<T>* merge(binary_heap<T>* binary_heap1, binary_heap<T>* binary_heap2) {
-    auto result = new binary_heap<T>();
+BinaryHeap<T>* merge(BinaryHeap<T>* binary_heap1, BinaryHeap<T>* binary_heap2) {
+    auto result = new BinaryHeap<T>();
 
     result->data.resize(binary_heap1->data.size() + binary_heap2->data.size());
 
@@ -126,13 +126,13 @@ binary_heap<T>* merge(binary_heap<T>* binary_heap1, binary_heap<T>* binary_heap2
 */
 
 int main() {
-    std::vector<binary_heap<int>*> a;
+    std::vector<BinaryHeap<int>*> a;
     int k, n, x, y;
 
     std::string operation;
     while (std::cin >> operation) {
         if (operation == "create") {
-            a.push_back(new binary_heap<int>());
+            a.push_back(new BinaryHeap<int>());
         } else if (operation == "insert") {
             std::cin >> k >> x;
             a[k]->insert(x);
