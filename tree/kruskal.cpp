@@ -17,12 +17,16 @@ std::vector<int> roots;
 std::vector<std::tuple<int, int, int>> edges;
 
 
-int get_star(int root) {
+int get_root(int root) {
     if (roots[root] == root) {
         return root;
     }
-    roots[root] = get_star(roots[root]);
+    roots[root] = get_root(roots[root]);
     return roots[root];
+}
+
+void unite(int a, int b) {
+    roots[get_root(a)] = roots[get_root(b)];
 }
 
 int main() {
@@ -55,9 +59,9 @@ int main() {
 
     int counter = 0;
     for (auto i : edges) {
-        if (get_star(std::get<0>(i)) != get_star(std::get<1>(i))) {
+        if (get_root(std::get<0>(i)) != get_root(std::get<1>(i))) {
             gotten_edges[counter] = i;
-            roots[get_star(std::get<1>(i))] = get_star(std::get<0>(i));
+            unite(std::get<1>(i), std::get<0>(i));
             sum += std::get<2>(i);
             counter++;
             if (counter == n - 1) {
