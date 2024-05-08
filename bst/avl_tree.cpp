@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 
 // АВЛ ДЕРЕВО
 
@@ -194,22 +193,22 @@ struct AVLTree {
         return node;
     }
 
-    Node<T>* find_k_maximum(T k, Node<T>* current_node) {
+    Node<T>* find_k_element(size_t k, Node<T>* current_node) {
         if (!current_node) {
             return nullptr;
         }
-        if (current_node->right_child) {
-            if (current_node->right_child->children >= k) {
-                return find_k_maximum(k, current_node->right_child);
+        if (current_node->left_child) {
+            if (current_node->left_child->children >= k) {
+                return find_k_element(k, current_node->left_child);
             }
-            k -= current_node->right_child->children;
+            k -= current_node->left_child->children;
         }
-        if (k == 1) {
+        if (k == 0) {
             return current_node;
         } else {
             k--;
         }
-        return find_k_maximum(k, current_node->left_child);
+        return find_k_element(k, current_node->right_child);
     }
 
 
