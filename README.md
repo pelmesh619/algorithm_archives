@@ -7,13 +7,13 @@
 
 **Содержание**
 
-* Сортировки - [\*тык\*](sort/sort.md)
-* Связные списки - [\*тык\*](linked_lists/linked_list.md)
-* Приоритетные очереди - [\*тык\*](priority_queue/priority_queue.md)
-* Бинарное дерево поиска - [\*тык\*](bst/bst.md)
-* Кодирование - [\*тык\*](encoding/encoding.md)
-* Динамическое программирование - [\*тык\*](dynamic/dynamic.md)
-* Графы - [\*тык\*](graph/graph.md)
-* Деревья - [\*тык\*](tree/tree.md)
-* Потоки - [\*тык\*](flow/flow.md)
-* Хеш-таблицы - [\*тык\*](hash_tables/hash_tables.md)
+* Сортировки - [\*тык\*](sort/sort.md) (empty)
+* Связные списки - [\*тык\*](linked_lists/linked_list.md) (empty)
+* Приоритетные очереди - [\*тык\*](priority_queue/priority_queue.md) (empty)
+* Бинарное дерево поиска - [\*тык\*](bst/bst.md) (~75%)
+* Кодирование - [\*тык\*](encoding/encoding.md) (empty)
+* Динамическое программирование - [\*тык\*](dynamic/dynamic.md) (empty)
+* Графы - [\*тык\*](graph/graph.md) (empty)
+* Деревья - [\*тык\*](tree/tree.md) (empty)
+* Потоки - [\*тык\*](flow/flow.md) (empty)
+* Хеш-таблицы - [\*тык\*](hash_tables/hash_tables.md) (~70%)
