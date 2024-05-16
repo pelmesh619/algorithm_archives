@@ -5,11 +5,11 @@
 
 template<typename T>
 struct Node {
-    int value;
+    T value;
     Node<T>* parent = nullptr;
     Node<T>* left_child = nullptr;
     Node<T>* right_child = nullptr;
-    int subtree_size = 1;
+    int children = 1;
 
     void untie() {
         parent = nullptr;
@@ -17,16 +17,18 @@ struct Node {
         right_child = nullptr;
     }
     void rechildren() {
-        subtree_size = 1;
+        int new_children = 1;
         if (left_child) {
-            subtree_size += left_child->subtree_size;
+            new_children += left_child->children;
         }
         if (right_child) {
-            subtree_size += right_child->subtree_size;
+            new_children += right_child->children;
         }
-        if (parent) {
+        if (parent && children != new_children) {
+            children = new_children;
             parent->rechildren();
         }
+        children = new_children;
     }
 
 };
@@ -53,7 +55,37 @@ struct Tree {
         } else {
             return;
         }
-        current_node->subtree_size++;
+        current_node->rechildren();
+    }
+
+    Node<T>* next_to(T value) {
+        return next_to(value, root);
+    }
+
+    Node<T>* next_to(T value, Node<T>* current_node, Node<T>* successor = nullptr) {
+        if (!current_node) {
+            return successor;
+        }
+        if (value < current_node->value) {
+            return next_to(value, current_node->left_child, current_node);
+        } else {
+            return next_to(value, current_node->right_child, successor);
+        }
+    }
+
+    Node<T>* prev_to(T value) {
+        return prev_to(value, root);
+    }
+
+    Node<T>* prev_to(T value, Node<T>* current_node, Node<T>* successor = nullptr) {
+        if (!current_node) {
+            return successor;
+        }
+        if (value <= current_node->value) {
+            return prev_to(value, current_node->left_child, successor);
+        } else {
+            return prev_to(value, current_node->right_child, current_node);
+        }
     }
 
     void insert(const T& value) {
@@ -70,7 +102,7 @@ struct Tree {
         }
         _insert(root, node);
     }
-    
+
     Node<T>* find(T value) {
         return find(value, root);
     }
@@ -81,74 +113,46 @@ struct Tree {
         }
         if (current_node->value == value) {
             return current_node;
-        }
-        if (current_node->value < value) {
+        } else if (current_node->value < value) {
             if (current_node->right_child) {
                 return find(value, current_node->right_child);
             }
-        } else if (current_node->left_child) {
-            return find(value, current_node->left_child);
+        } else {
+            if (current_node->left_child) {
+                return find(value, current_node->left_child);
+            }
         }
         return nullptr;
     }
 
-    void remove(int value) {
+    Node<T>* remove(T value) {
         Node<T>* place = find(value, root);
         if (!place) {
-            return;
+            return nullptr;
         }
-        _remove(place);
+        return _remove(place);
     }
 
-    Node<T>* next_to(int value) {
-        return next_to(value, root);
-    }
-
-    Node<T>* next_to(int value, Node<T>* current_node, Node<T>* successor = nullptr) {
-        if (!current_node) {
-            return successor;
-        }
-        if (value < current_node->value) {
-            return next_to(value, current_node->left_child, current_node);
-        } else {
-            return next_to(value, current_node->right_child, successor);
-        }
-    }
-
-    Node<T>* prev_to(int value) {
-        return prev_to(value, root);
-    }
-
-    Node<T>* prev_to(int value, Node<T>* current_node, Node<T>* successor = nullptr) {
-        if (!current_node) {
-            return successor;
-        }
-        if (value <= current_node->value) {
-            return prev_to(value, current_node->left_child, successor);
-        } else {
-            return prev_to(value, current_node->right_child, current_node);
-        }
-    }
-
-    void _remove(Node<T>* node) {
+    Node<T>* _remove(Node<T>* node) {
         if (!node) {
-            return;
+            return nullptr;
         }
         if (!node->left_child && !node->right_child) {
             if (node == root) {
                 root = nullptr;
             } else if (node->parent->left_child == node) {
                 node->parent->left_child = nullptr;
+                node->parent->rechildren();
             } else if (node->parent->right_child == node) {
                 node->parent->right_child = nullptr;
+                node->parent->rechildren();
             }
-            node->rechildren();
             node->untie();
         } else if (node->left_child && node->right_child) {
             Node<T>* next_node = next_to(node->value, root);
-            _remove(next_node);
+            Node<T>* result = _remove(next_node);
             node->value = next_node->value;
-            node->rechildren();
+            return result;
         } else if (node->left_child) {
             if (node->parent) {
                 if (node->parent->left_child == node) {
@@ -161,10 +165,7 @@ struct Tree {
             }
             if (node == root) {
                 root = node->left_child;
-                root->rechildren();
             }
-
-            node->rechildren();
             node->untie();
         } else if (node->right_child) {
             if (node->parent) {
@@ -174,32 +175,15 @@ struct Tree {
                     node->parent->right_child = node->right_child;
                 }
                 node->right_child->parent = node->parent;
+                node->parent->rechildren();
             }
             if (node == root) {
                 root = node->right_child;
-                root->rechildren();
             }
-            node->rechildren();
             node->untie();
         }
-    }
 
-    Node<T>* find_k_maximum(int k, Node<T>* current_node) {
-        if (!current_node) {
-            return nullptr;
-        }
-        if (current_node->right_child) {
-            if (current_node->right_child->subtree_size >= k) {
-                return find_k_maximum(k, current_node->right_child);
-            }
-            k -= current_node->right_child->subtree_size;
-        }
-        if (k == 1) {
-            return current_node;
-        } else {
-            k--;
-        }
-        return find_k_maximum(k, current_node->left_child);
+        return node;
     }
 
     std::vector<T> inorder() {
@@ -251,7 +235,26 @@ struct Tree {
         return result;
     }
 
+    Node<T>* find_k_element(size_t k, Node<T>* current_node) {
+        if (!current_node) {
+            return nullptr;
+        }
+        if (current_node->left_child) {
+            if (current_node->left_child->children > k) {
+                return find_k_element(k, current_node->left_child);
+            }
+            k -= current_node->left_child->children;
+        }
+        if (k == 0) {
+            return current_node;
+        } else {
+            k--;
+        }
+        return find_k_element(k, current_node->right_child);
+    }
+
 };
+
 
 /**
 Эта программа умеет отвечать на запросы:
@@ -261,11 +264,12 @@ delete x - удаление из дерева элемента x
 exists x - проверка на наличие элемента x (true, если элемент в дереве, иначе false)
 next x - вывод следующего элемента после x (none, если такового нет)
 prev x - вывод предыдущего элемента перед x (none, если такового нет)
+index k - вывод элемента дерева под индексом k (индексация с 0)
  */
 
 int main() {
-    Tree<int> t;
     int x;
+    Tree<int> t;
 
     std::string operation;
     while (std::cin >> operation >> x) {
@@ -284,6 +288,13 @@ int main() {
             }
         } else if (operation == "prev") {
             auto node = t.prev_to(x);
+            if (node) {
+                std::cout << node->value << std::endl;
+            } else {
+                std::cout << "none" << std::endl;
+            }
+        } else if (operation == "index") {
+            auto node = t.find_k_element(x, t.root);
             if (node) {
                 std::cout << node->value << std::endl;
             } else {

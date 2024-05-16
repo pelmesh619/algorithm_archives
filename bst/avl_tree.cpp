@@ -18,16 +18,18 @@ struct Node {
         right_child = nullptr;
     }
     void rechildren() {
-        children = 1;
+        int new_children = 1;
         if (left_child) {
-            children += left_child->children;
+            new_children += left_child->children;
         }
         if (right_child) {
-            children += right_child->children;
+            new_children += right_child->children;
         }
-        if (parent) {
+        if (parent && children != new_children) {
+            children = new_children;
             parent->rechildren();
         }
+        children = new_children;
     }
     void reheight() {
         int right_height = right_child ? right_child->height : 0;
@@ -61,7 +63,7 @@ struct AVLTree {
         } else {
             return;
         }
-        current_node->children++;
+        current_node->rechildren();
         current_node->reheight();
         rebalance(current_node);
     }
@@ -121,8 +123,7 @@ struct AVLTree {
         }
         if (current_node->value == value) {
             return current_node;
-        }
-        if (current_node->value < value) {
+        } else if (current_node->value < value) {
             if (current_node->right_child) {
                 return find(value, current_node->right_child);
             }
@@ -134,12 +135,12 @@ struct AVLTree {
         return nullptr;
     }
 
-    void remove(T value) {
+    Node<T>* remove(T value) {
         Node<T>* place = find(value, root);
         if (!place) {
-            return;
+            return nullptr;
         }
-        _remove(place);
+        return _remove(place);
     }
 
     Node<T>* _remove(Node<T>* node) {
@@ -152,14 +153,16 @@ struct AVLTree {
                 root = nullptr;
             } else if (node->parent->left_child == node) {
                 node->parent->left_child = nullptr;
+                node->parent->rechildren();
             } else if (node->parent->right_child == node) {
                 node->parent->right_child = nullptr;
+                node->parent->rechildren();
             }
             node->untie();
         } else if (node->left_child && node->right_child) {
-            Node<T>* prev_node = next_to(node->value, root);
-            Node<T>* result = _remove(prev_node);
-            node->value = prev_node->value;
+            Node<T>* next_node = next_to(node->value, root);
+            Node<T>* result = _remove(next_node);
+            node->value = next_node->value;
             return result;
         } else if (node->left_child) {
             if (node->parent) {
@@ -169,6 +172,7 @@ struct AVLTree {
                     node->parent->right_child = node->left_child;
                 }
                 node->left_child->parent = node->parent;
+                node->parent->rechildren();
             }
             if (node == root) {
                 root = node->left_child;
@@ -182,6 +186,7 @@ struct AVLTree {
                     node->parent->right_child = node->right_child;
                 }
                 node->right_child->parent = node->parent;
+                node->parent->rechildren();
             }
             if (node == root) {
                 root = node->right_child;
@@ -198,7 +203,7 @@ struct AVLTree {
             return nullptr;
         }
         if (current_node->left_child) {
-            if (current_node->left_child->children >= k) {
+            if (current_node->left_child->children > k) {
                 return find_k_element(k, current_node->left_child);
             }
             k -= current_node->left_child->children;
@@ -330,8 +335,6 @@ struct AVLTree {
             node = node->parent;
         }
     }
-
-
 };
 
 
@@ -343,6 +346,7 @@ delete x - удаление из дерева элемента x
 exists x - проверка на наличие элемента x (true, если элемент в дереве, иначе false)
 next x - вывод следующего элемента после x (none, если такового нет)
 prev x - вывод предыдущего элемента перед x (none, если такового нет)
+index k - вывод элемента дерева под индексом k (индексация с 0)
  */
 
 int main() {
@@ -371,8 +375,15 @@ int main() {
             } else {
                 std::cout << "none" << std::endl;
             }
+        } else if (operation == "index") {
+            auto node = t.find_k_element(x, t.root);
+            if (node) {
+                std::cout << node->value << std::endl;
+            } else {
+                std::cout << "none" << std::endl;
+            }
         }
     }
+
     return 0;
 }
-
