@@ -17,6 +17,7 @@
 * Деревья - [\*тык\*](tree/tree.md) (empty)
 * Потоки - [\*тык\*](flow/flow.md) (empty)
 * Хеш-таблицы - [\*тык\*](hash_tables/hash_tables.md) (~70%)
+* Строки - [\*тык\*](strings/strings.md) (empty)
 
 ## Прочее
 
